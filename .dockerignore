@@ -1,0 +1,47 @@
+# Git files
+.git
+.gitignore
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Build directories
+target/
+bin/
+obj/
+build/
+out/
+
+# Logs
+logs/
+*.log
+
+# Test reports
+test-output/
+reports/
+newman-reports/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Docker files (no need to include these in the build)
+Dockerfile*
+docker-compose*
+
+# Documentation
+README.md
+LICENSE
+docs/
+
+# Node modules (for API tests)
+node_modules/
+npm-debug.log

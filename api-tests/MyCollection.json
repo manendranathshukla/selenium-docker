@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "f8b0e45b-3b7d-4f6a-9c5e-4b0c0a0e0a0a",
+		"name": "API Testing Demo",
+		"description": "A collection of API tests for demonstration purposes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Requests",
+			"item": [
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "reqres-free-v1"
+							}
+						],
+						"url": {
+							"raw": "https://reqres.in/api/users?page=2",
+							"protocol": "https",
+							"host": [
+								"reqres",
+								"in"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code check",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Response time check",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Check data structure",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(jsonData).to.have.property('page');",
+									"    pm.expect(jsonData).to.have.property('per_page');",
+									"    pm.expect(jsonData).to.have.property('total');",
+									"    pm.expect(jsonData).to.have.property('total_pages');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"});",
+									"",
+									"// Check data array",
+									"pm.test(\"Data array is not empty\", function () {",
+									"    pm.expect(jsonData.data).to.be.an('array').and.to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"// Check user object structure",
+									"pm.test(\"User object has correct structure\", function () {",
+									"    const user = jsonData.data[0];",
+									"    pm.expect(user).to.have.property('id');",
+									"    pm.expect(user).to.have.property('email');",
+									"    pm.expect(user).to.have.property('first_name');",
+									"    pm.expect(user).to.have.property('last_name');",
+									"    pm.expect(user).to.have.property('avatar');",
+									"});",
+									"",
+									"// Save user ID for later use",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.environment.set(\"userId\", jsonData.data[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Single User",
+					"request": {
+						"method": "GET",
+						"header": [{
+							"key": "x-api-key",
+							"value": "reqres-free-v1"
+						}],
+						"url": {
+							"raw": "https://reqres.in/api/users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"reqres",
+								"in"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code check",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Check data structure",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"});",
+									"",
+									"// Check user data",
+									"pm.test(\"User ID matches request\", function () {",
+									"    const userId = pm.environment.get(\"userId\");",
+									"    pm.expect(jsonData.data.id).to.equal(Number(userId));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "POST Requests",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+								
+							},
+							{
+								"key": "x-api-key",
+								"value": "reqres-free-v1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"job\": \"Software Tester\"\n}"
+						},
+						"url": {
+							"raw": "https://reqres.in/api/users",
+							"protocol": "https",
+							"host": [
+								"reqres",
+								"in"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code check",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Check response structure",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData).to.have.property('job');",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('createdAt');",
+									"});",
+									"",
+									"// Check data values",
+									"pm.test(\"Response data matches request\", function () {",
+									"    pm.expect(jsonData.name).to.equal(\"John Doe\");",
+									"    pm.expect(jsonData.job).to.equal(\"Software Tester\");",
+									"});",
+									"",
+									"// Save created user ID",
+									"pm.environment.set(\"createdUserId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "PUT Requests",
+			"item": [
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "reqres-free-v1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe Updated\",\n    \"job\": \"Senior Software Tester\"\n}"
+						},
+						"url": {
+							"raw": "https://reqres.in/api/users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"reqres",
+								"in"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code check",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Check response structure",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData).to.have.property('job');",
+									"    pm.expect(jsonData).to.have.property('updatedAt');",
+									"});",
+									"",
+									"// Check data values",
+									"pm.test(\"Response data matches request\", function () {",
+									"    pm.expect(jsonData.name).to.equal(\"John Doe Updated\");",
+									"    pm.expect(jsonData.job).to.equal(\"Senior Software Tester\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DELETE Requests",
+			"item": [
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [{
+							"key": "x-api-key",
+							"value": "reqres-free-v1"
+						}],
+						"url": {
+							"raw": "https://reqres.in/api/users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"reqres",
+								"in"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code check",
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"// Verify response is empty",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\"\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
