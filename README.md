@@ -215,9 +215,6 @@ pipeline {
    - Check container logs: `docker logs <container_id>`
    - Ensure your CMD or ENTRYPOINT is correctly configured
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contributing
 
